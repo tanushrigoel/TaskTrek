@@ -1,31 +1,18 @@
 import dbConnect from "@/utils/dbConnect";
 import { getServerSession, User } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
-import { UserModel } from "@/model/User.schema";
+import { Task, UserModel } from "@/model/User.schema";
 import mongoose from "mongoose";
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   await dbConnect();
   const session = await getServerSession(authOptions);
   const user: User = session?.user as User;
-  if (!session || !user) {
-    return Response.json(
-      {
-        success: false,
-        message: "Not authenticated",
-      },
-      { status: 401 }
-    );
-  }
+  const { title, description, status, priority } = await req.json();
   try {
     const userId = new mongoose.Types.ObjectId(user._id);
-    const Alltasks = await UserModel.aggregate([
-      { $match: { _id: userId } },
-      { $unwind: "$tasks" },
-      { $sort: { "tasks.createdAt": -1 } },
-      { $group: { _id: "$_id", tasks: { $push: "$tasks" } } },
-    ]);
-    if (Alltasks.length == 0) {
+    const currUser = await UserModel.findById(userId);
+    if (!currUser) {
       return Response.json(
         {
           success: false,
@@ -34,10 +21,13 @@ export async function GET(req: Request) {
         { status: 401 }
       );
     }
+    const newTask = { title, description, status, priority };
+    currUser.tasks?.push(newTask as Task);
+    await currUser.save();
     return Response.json(
       {
         success: true,
-        message: Alltasks[0].tasks,
+        message: "New task created successfully",
       },
       { status: 200 }
     );
@@ -46,7 +36,7 @@ export async function GET(req: Request) {
     return Response.json(
       {
         success: false,
-        message: "Can't fetch messages",
+        message: "Error creating message",
       },
       { status: 401 }
     );

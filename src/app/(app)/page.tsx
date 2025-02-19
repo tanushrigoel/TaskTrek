@@ -1,22 +1,15 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { signIn } from "next-auth/react";
 import "@/app/globals.css";
-import { redirect } from "next/navigation";
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import { Maincontent } from "@/components/Maincontent";
 function page() {
-  const handleSignIn = async () => {
-    signIn("google", {
-      callbackUrl: `${window.location.origin}/list`,
-    });
-  };
-
   return (
-    <div>
-      <Button variant="outline" onClick={handleSignIn}>
-        Get Started
-      </Button>
+    <div data-theme="black" className="font-DM">
+      <Navbar />
+      <Hero />
     </div>
   );
 }
-
+// data-theme="black"
 export default page;

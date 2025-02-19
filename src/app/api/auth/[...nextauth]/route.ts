@@ -21,24 +21,25 @@ export const authOptions: NextAuthOptions = {
         if (!profile?.email) {
           return false;
         }
-        console.log(account);
-        
+        // console.log(account);
 
-        const user = await UserModel.findOne({ email: profile.email });
+        let user = await UserModel.findOne({ email: profile.email }).select("_id name email");
 
-        if(!user) {
-          const newUser = await UserModel.create({
+        if (!user) {
+          user = await UserModel.create({
             id: account?.providerAccountId,
             email: profile.email,
             name: profile.name,
           });
-          console.log("hi ",account?.providerAccountId);
-          
+          // console.log("hi ", account?.providerAccountId);
 
-          if (!newUser) {
+          if (!user) {
             console.error("Failed to register new user");
             return false;
           }
+        }
+        if (account) {
+          account.userId = (user as any)._id.toString();
         }
 
         return true;
@@ -48,15 +49,25 @@ export const authOptions: NextAuthOptions = {
       }
     },
     async jwt({ token, user, account, profile }) {
-      if (profile?.email) {
-        const dbUser = await UserModel.findOne({ email: profile.email });
-        if (!dbUser) {
-          console.error("User not found in database");
-          return token; // Avoid throwing an error here
-        }
-        token.id = dbUser.id.toString();
+      if (user) {
+        // console.log("user here ", user);
+        // console.log("token here ", token);
+        // console.log("account here ", account);
+        // console.log("profile here ", profile);
+        token.email = user.email;
+        token._id = account?.userId;
       }
       return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        if (session.user){
+          session.user.email = token.email;
+          session.user._id = token._id as string;
+        } 
+      }
+
+      return session;
     },
   },
   pages: {

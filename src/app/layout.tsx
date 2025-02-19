@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import AuthProvider from "@/context/AuthProvider";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,12 +25,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark">
       <AuthProvider>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           {children}
+          <Toaster />
         </body>
       </AuthProvider>
     </html>
