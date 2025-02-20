@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { uuidv7 } from "uuidv7";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TaskSchema } from "@/schema/taskSchema";
@@ -31,18 +32,19 @@ import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { closestCorners, DndContext } from "@dnd-kit/core";
 import { Maincontent } from "@/components/Maincontent";
-
-export type Tasks = {
-  title: "";
-  description?: "";
-  priority: "";
-  status: "";
-};
+import React from "react";
+import { taskStore } from "@/lib/zustandStore";
+// export type Tasks = {
+//   title: "";
+//   description?: "";
+//   priority: "";
+//   status: "";
+// };
 
 function page() {
-  let [tasks, setTasks] = useState<Tasks[]>([]);
+  // let [tasks, setTasks] = useRecoilState(tasksSelector);
+  const { tasks, setTasks } = taskStore();
   const toast = useToast();
   const form = useForm<z.infer<typeof TaskSchema>>({
     resolver: zodResolver(TaskSchema),
@@ -57,14 +59,16 @@ function page() {
   const onSubmit = async (data: z.infer<typeof TaskSchema>) => {
     try {
       const newTask = {
+        id: uuidv7(),
         title: data.title,
         description: data.title || "",
         priority: data.priority || "Medium",
         status: data.status || "To-Do",
       };
       localStorage.setItem("tasks", JSON.stringify([...tasks, newTask]));
-      window.dispatchEvent(new Event("storage"));
-      const response = await axios.post("/api/create-task", newTask);
+      // window.dispatchEvent(new Event("storage"));
+      setTasks([...tasks, newTask]);
+      // const response = await axios.post("/api/create-task", newTask);
     } catch (error) {
       console.log("Error in creating task");
       toast.toast({
@@ -75,7 +79,7 @@ function page() {
   };
 
   return (
-    <div className="max-w-screen-2xl p-3">
+    <div className="max-w-screen-2xl p-3" data-theme="black">
       <div className="flex flex-row justify-between">
         <Dialog>
           <DialogTrigger asChild>
@@ -178,10 +182,7 @@ function page() {
           </DialogContent>
         </Dialog>
         <div className="flex flex-row">
-          <Button variant="default" className="mr-3">
-            {" "}
-            Board
-          </Button>
+          
           <Button
             variant="destructive"
             className="bg-red-600 text-white rounded-[5px]"
