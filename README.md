@@ -46,7 +46,7 @@ Copy
 Edit
 npm run dev  # or yarn dev
 ```
-The app will be available at http://localhost:3000
+The app will be available at http://localhost:8000
 
 🎮 How to Use
 1️⃣ Add a New Task – Click the "Add Task" button to create a new task.
