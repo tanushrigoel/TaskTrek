@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -138,7 +137,7 @@ function page() {
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="To-Do">To-Do</SelectItem>
-                          <SelectItem value="In-progress">
+                          <SelectItem value="In-Progress">
                             In-progress
                           </SelectItem>
                         </SelectContent>

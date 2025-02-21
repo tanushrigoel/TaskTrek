@@ -13,7 +13,7 @@ import { taskStore } from "@/lib/zustandStore";
 interface Task {
   id: string;
   title: string;
-  description?: string;
+  description?: string | "";
   status: string;
 }
 
@@ -98,7 +98,7 @@ export function Maincontent() {
   const containers = ["To-Do", "In-Progress", "Done", "Delete Task"];
 
   return (
-    <main className="container mx-auto p-4">
+    <main className="container mx-auto p-4 mt-5">
       <DndContext onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {containers.map((container) => (
