@@ -3,11 +3,10 @@ import logoImage from "@/components/images/logosaas.png";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { signIn } from "next-auth/react";
+import { redirect } from "next/navigation";
 function Navbar() {
     const handleSignIn = async () => {
-        signIn("google", {
-          callbackUrl: `${window.location.origin}/list`,
-        });
+        redirect("/list")
       };
   return (
     <div className="container px-4">
@@ -22,7 +21,7 @@ function Navbar() {
         </div>
         <div>
           <Button onClick={handleSignIn} className="bg-white py-2 px-4 rounded-lg text-black border-none hover:bg-white">
-            Login / Signup
+            Start tasking
           </Button>
         </div>
       </div>
